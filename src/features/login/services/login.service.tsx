@@ -1,6 +1,6 @@
 import apiHelper from '../../../shared/helpers/api.helper';
 import { AUTH_API } from '../../../shared/constants/auth-api.constant';
-import type { Account } from '../types/account.types';
+import type { Account } from '../dtos/account.types';
 
 /**
  * @param {Account} accountDto

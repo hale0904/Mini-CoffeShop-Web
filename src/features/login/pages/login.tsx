@@ -1,31 +1,33 @@
 import { useState } from 'react';
 import LoginService from '../services/login.service';
-import type { Account } from '../types/account.types';
+import type { Account } from '../dtos/account.types';
 import AuthHelper from '../../../shared/auth/auth.helper';
 import './login.scss';
 import slider1 from '../../../assets/slider1.jpeg';
+import { Alert } from 'antd';
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState<string>('');
+  const [email, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [successMsg, setSuccessMsg] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!username || !password) {
-      alert('Please fill in all fields');
+    if (!email || !password) {
+      setErrorMsg('Lỗi: Vui lòng nhập đầy đủ thông tin!');
       return;
     }
 
     const accountDto: Account = {
-      email: username,
+      email: email,
       password: password,
     };
 
     try {
       const res = await LoginService(accountDto);
-      console.log('Login success:', res);
-      alert('Login success');
+      setSuccessMsg('Đăng nhập thành công!');
       AuthHelper.setTokens({
         accessToken: res.data.accessToken,
         refreshToken: res.data.refreshToken,
@@ -33,31 +35,37 @@ const Login: React.FC = () => {
       window.location.href = '/';
     } catch (error) {
       console.error(error);
-      alert('Login failed');
+      setErrorMsg('Đăng nhập thất bại');
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-form">
-        <h2>Login</h2>
-        <form onSubmit={handleSubmit}>
+        <p className='login-form-title'>ĐĂNG NHẬP</p>
+        <form onSubmit={handleSubmit} className="login-form-content">
           <input
             type="text"
-            value={username}
+            value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
-            placeholder="Username"
+            placeholder="Email"
           />
 
           <input
             type="password"
             value={password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-            placeholder="Password"
+            placeholder="Mật khẩu"
           />
 
           <button type="submit">Login</button>
         </form>
+        {errorMsg && (
+          <Alert type="error" message={errorMsg} showIcon style={{ marginBottom: 12 }} />
+        )}
+        {successMsg && (
+          <Alert type="success" message={successMsg} showIcon style={{ marginBottom: 12 }} />
+        )}
       </div>
       <div className="login-image">
         <img src={slider1} alt="slider1" />

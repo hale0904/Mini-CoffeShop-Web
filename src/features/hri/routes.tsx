@@ -1,16 +1,16 @@
-import type { RouteObject } from "react-router-dom";
-import ListStaff from "./pages/listStaff/listStaff";
+import type { RouteObject } from 'react-router-dom';
+import ListStaff from './pages/listStaff/listStaff';
 
 export const hrRoutes: RouteObject[] = [
   {
-    path: 'hri',
+    path: 'hr',
     children: [
       {
-        index: true,              // page mặc định: /hri
+        index: true,
         element: <ListStaff />,
       },
       {
-        path: 'listStaff',        // /hri/listStaff
+        path: 'listHr',
         element: <ListStaff />,
       },
     ],

@@ -1,2 +1,2 @@
 export * from './services/login.service';
-export * from './types/account.types';
+export * from './dtos/account.types';

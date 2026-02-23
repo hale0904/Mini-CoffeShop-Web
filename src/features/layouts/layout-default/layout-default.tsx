@@ -1,18 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { PieChartOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
-
-import { FeatureService, MenuService } from '../services/feature.service';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { Header } from 'antd/es/layout/layout';
 import { DTOFeature } from '../dtos/feature.dto';
+import { FeatureService, MenuService } from '../services/feature.service';
 import type { DTOMenu } from '../dtos/menu.dto';
-import { Outlet } from 'react-router-dom';
+import logo from '../../../assets/logo.jpg';
+import './layoutAdmin.scss';
 
 const { Footer, Sider, Content } = Layout;
 
@@ -31,6 +27,7 @@ const layoutDefault: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [features, setFeatures] = useState<DTOMenu[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const navigate = useNavigate();
 
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -46,39 +43,41 @@ const layoutDefault: React.FC = () => {
   }, []);
 
   const loadFeatures = async () => {
-  try {
-    const res = await MenuService();
-    const data = res.data; // vì API bạn bọc trong { success, data }
+    try {
+      const res = await MenuService();
+      const data = res.data;
 
-    const menus: MenuItem[] = data.map((feature: any) =>
-      getItem(
-        feature.name,        // label
-        feature.code,        // key
-        <PieChartOutlined />, // icon menu cha
-        feature.menu.map((m: any) =>
-          getItem(
-            m.name,          // label
-            m.code,          // key
-            <UserOutlined /> // icon menu con
-          )
-        )
-      )
-    );
+      const menus: MenuItem[] = data.map((feature: any) =>
+        getItem(
+          feature.name,
+          feature.code,
+          <PieChartOutlined />,
+          feature.menu.map((m: any) => getItem(m.name, m.path, <UserOutlined />)),
+        ),
+      );
 
-    setMenuItems(menus);
-  } catch (error) {
-    console.error('Load menu error', error);
-  }
-};
-
+      setMenuItems(menus);
+    } catch (error) {
+      console.error('Load menu error', error);
+    }
+  };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsed={collapsed} theme="dark" onCollapse={(value) => setCollapsed(value)}>
-        <Menu theme="dark" mode="inline" items={menuItems} />
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        theme="light"
+        onCollapse={(value) => setCollapsed(value)}
+      >
+        <div className="logo-container">
+          <img src={logo} alt="logo" className="logo" />
+        </div>
+        <Menu theme="light" mode="inline" items={menuItems} onClick={(e) => navigate(e.key)} />
       </Sider>
 
       <Layout>
+        <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: '0 16px' }}>
           <Breadcrumb style={{ margin: '16px 0' }} />
           <div
