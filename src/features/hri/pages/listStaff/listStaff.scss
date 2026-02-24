@@ -1,10 +1,89 @@
 .listStaff {
-    min-height: 100vh;
-    width: 100%;
-
-    .grid {
-        min-height: 100%;
-        width: 100%;
-        font-size: 12px;
+  min-height: 100vh;
+  width: 100%;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    .filter-container {
+      align-items: center;
+      gap: 8px;
+      .filter-content {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 6px;
+        .filter-icon {
+          font-size: 30px;
+        }
+      }
+      .search-field-container {
+        margin-left: 4px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        .search-field {
+          label {
+            font-size: 12px;
+          }
+          .MuiInputBase-root {
+            input {
+              font-size: 12px;
+              padding: 8px 12px;
+              width: 220px;
+            }
+          }
+        }
+        .btn-search {
+          padding: 9px 12px;
+          background-color: #dac065;
+          .icon-search {
+            font-size: 16px;
+            color: #fff;
+          }
+          &:hover {
+            background-color: #c8a84d;
+          }
+        }
+      }
     }
+    .btn-add-container {
+      display: flex;
+      align-items: last baseline;
+      margin-bottom: 10px;
+      .btn-add {
+        font-size: 14px;
+        font-weight: 500;
+        padding: 9px 16px;
+        background-color: #dac065;
+        border: none;
+        color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover {
+          background-color: #c8a84d;
+        }
+      }
+    }
+  }
+
+  .grid {
+    min-height: 100%;
+    width: 100%;
+    font-size: 12px;
+  }
+
+  
+}
+
+.modal-staff {
+  .ant-modal-content {
+    .ant-modal-header {
+      .ant-modal-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: red; // test thử cho dễ thấy
+      }
+    }
+  }
 }
