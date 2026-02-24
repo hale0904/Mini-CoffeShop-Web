@@ -1,3 +1,4 @@
 export const AUTH_API = {
-  LOGIN: '/api/auth/login'
+  Login: '/api/auth/login',
+  Logout: '/api/auth/logout',
 };

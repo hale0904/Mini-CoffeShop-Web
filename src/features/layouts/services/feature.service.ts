@@ -1,3 +1,4 @@
+import { AUTH_API } from "../../../shared/constants/auth-api.constant";
 import { LAYOUT_API } from "../../../shared/constants/layout.constant";
 import apiHelper from "../../../shared/helpers/api.helper";
 
@@ -7,4 +8,8 @@ export function FeatureService() {
 
 export function MenuService() {
   return apiHelper.post(LAYOUT_API.Menu)
+}
+
+export function LogoutService() {
+  return apiHelper.post(AUTH_API.Logout)
 }

@@ -1,14 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PieChartOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { Breadcrumb, Layout, Menu, Modal, Spin, theme, Typography } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Header } from 'antd/es/layout/layout';
 import { DTOFeature } from '../dtos/feature.dto';
-import { FeatureService, MenuService } from '../services/feature.service';
+import { FeatureService, LogoutService, MenuService } from '../services/feature.service';
 import type { DTOMenu } from '../dtos/menu.dto';
 import logo from '../../../assets/logo.jpg';
-import './layoutAdmin.scss';
+import './layout-default.scss';
+import Popper, { type PopperPlacementType } from '@mui/material/Popper';
+import Fade from '@mui/material/Fade';
+import Paper from '@mui/material/Paper';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const { Footer, Sider, Content } = Layout;
 
@@ -27,8 +31,11 @@ const layoutDefault: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [features, setFeatures] = useState<DTOMenu[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [openProfile, setOpenProfile] = useState(false);
   const navigate = useNavigate();
-
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [placement, setPlacement] = React.useState<PopperPlacementType>('bottom-end');
+  const [loading, setLoading] = useState<boolean>(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -41,6 +48,13 @@ const layoutDefault: React.FC = () => {
     calledRef.current = true;
     loadFeatures();
   }, []);
+
+  const handleClick =
+    (newPlacement: PopperPlacementType) => (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+      setOpenProfile((prev) => !prev);
+      setPlacement(newPlacement);
+    };
 
   const loadFeatures = async () => {
     try {
@@ -62,7 +76,26 @@ const layoutDefault: React.FC = () => {
     }
   };
 
+  const handleLogout = () => {
+    Modal.confirm({
+      title: 'Xác nhận',
+      content: 'Bạn có chắc chắn muốn đăng xuất không?',
+      okText: 'Đăng xuất',
+      cancelText: 'Hủy',
+      onOk: () => {
+        setLoading(true);
+        LogoutService().then(() => {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          navigate('/login');
+          setLoading(false);
+        });
+      },
+    });
+  };
+
   return (
+    <Spin spinning={loading}>
     <Layout style={{ minHeight: '100vh' }}>
       <Sider
         collapsible
@@ -77,7 +110,40 @@ const layoutDefault: React.FC = () => {
       </Sider>
 
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+        <Header className="header-layout">
+          <div className="header-logo-container">
+            <img
+              src={logo}
+              alt="logo"
+              className="header-logo"
+              onClick={handleClick('bottom-end')}
+              style={{ cursor: 'pointer' }}
+            />
+          </div>
+        </Header>
+        <Popper
+          sx={{ zIndex: 1200 }}
+          open={openProfile}
+          anchorEl={anchorEl}
+          placement={placement}
+          transition
+          className="popper-container"
+        >
+          {({ TransitionProps }) => (
+            <Fade {...TransitionProps} timeout={350}>
+              <Paper>
+                <Typography>
+                  <div className="popup-container">
+                    <button className="popup-btn" onClick={handleLogout}>
+                      <LogoutIcon sx={{ fontSize: 16, mr: 1 }} />
+                      <p>Đăng xuất</p>
+                    </button>
+                  </div>
+                </Typography>
+              </Paper>
+            </Fade>
+          )}
+        </Popper>
         <Content style={{ margin: '0 16px' }}>
           <Breadcrumb style={{ margin: '16px 0' }} />
           <div
@@ -95,6 +161,7 @@ const layoutDefault: React.FC = () => {
         <Footer style={{ textAlign: 'center' }}>Hale Coffee ©{new Date().getFullYear()}</Footer>
       </Layout>
     </Layout>
+    </Spin>
   );
 };
 
