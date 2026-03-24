@@ -13,5 +13,4 @@ export class DTOStaff {
   cccd: string = '';
   status: number = 0;
   statusName: string = '';
-  permissions: any = {};
 }

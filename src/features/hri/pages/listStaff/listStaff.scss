@@ -1,5 +1,5 @@
 .listStaff {
-  min-height: 100vh;
+  min-height: 75vh;
   width: 100%;
   .header {
     display: flex;
@@ -72,18 +72,78 @@
     width: 100%;
     font-size: 12px;
   }
-
-  
 }
 
 .modal-staff {
   .ant-modal-content {
-    .ant-modal-header {
-      .ant-modal-title {
-        font-size: 18px;
+    border-radius: 8px;
+  }
+
+  .ant-modal-header {
+    background: #fff;
+  }
+
+  .ant-modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+    display: flex;
+    justify-content: center;
+  }
+
+  .ant-modal-body {
+    padding: 16px 20px;
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      label {
+        font-size: 14px;
         font-weight: 500;
-        color: red; // test thử cho dễ thấy
+        color: #333;
+      }
+      input {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        &:focus {
+          outline: none;
+          border-color: #dac065;
+        }
       }
     }
+    .form-btn {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+      .btn-cancel {
+        padding: 8px 16px;
+        background-color: #f0f0f0;
+        border: none;
+        color: #333;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover {
+          background-color: #e0e0e0;
+        }
+      }
+      .btn-submit {
+        padding: 8px 16px;
+        background-color: #dac065;
+        border: none;
+        color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover {
+          background-color: #c8a84d;
+        }
+      }
+    }
+  }
+
+  .ant-modal-close {
+    color: #333;
   }
 }
