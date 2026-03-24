@@ -2,8 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import AuthHelper from '../shared/auth/auth.helper';
 
 const PrivateLayout = () => {
-  const token = AuthHelper.isAuthenticated();
-  if (!token) {
+   if (!AuthHelper.isAuthenticated()) {
     AuthHelper.logout();
     return <Navigate to="/login" replace />;
   }
