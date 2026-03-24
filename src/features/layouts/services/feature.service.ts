@@ -1,5 +1,5 @@
-import { AUTH_API } from "../../../shared/constants/auth-api.constant";
-import { LAYOUT_API } from "../../../shared/constants/layout.constant";
+import { AUTH_API } from "../../../shared/api/auth.api";
+import { LAYOUT_API } from "../../../shared/api/layout.api";
 import apiHelper from "../../../shared/helpers/api.helper";
 
 export function FeatureService() {

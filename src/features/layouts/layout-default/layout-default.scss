@@ -1,54 +1,96 @@
-.header-layout {
-  background-color: #ffdb58;
-  padding: 0;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  height: 64px;
+@use '../../../assets/styles/variables' as *;
 
-  .header-logo-container {
+.spin .ant-spin-container::after {
+  background: rgba(255, 255, 255, 0) !important;
+}
+
+.spin .ant-spin-blur {
+  opacity: 0.5;
+}
+
+.spin .ant-spin-dot {
+  color: #1890ff;
+}
+.layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  .header-layout {
+    background-color: $blue-700;
+    padding: 0;
     display: flex;
+    justify-content: flex-end;
     align-items: center;
-    height: 100%;
-    .header-logo {
-      height: 40px;
-      border-radius: 100px;
+    height: 64px;
+
+    .header-logo-container {
       display: flex;
-      margin: 0 18px;
+      align-items: center;
+      height: 100%;
+      .header-logo {
+        height: 40px;
+        border-radius: 100px;
+        display: flex;
+        margin: 0 18px;
+      }
     }
   }
-}
-.logo-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 64px;
-  .logo {
+  .logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 64px;
+    .logo {
+      height: 64px;
+    }
   }
-}
-.popper-container{
-  .MuiPaper-elevation {
-    .ant-typography {
-      .popup-container {
-        .popup-btn {
-          padding: 6px 10px;
-          width: 120px;
-          border: none;
-          background-color: transparent;
-          color: #3a3737;
-          display: flex;
-          align-items: center;
-          gap: 5px;
-          &:hover {
-            background-color: #f3f0c8;
-            border-radius: 4px;
-          }
-          p {
-            margin: 0;
+  .popper-container {
+    .MuiPaper-elevation {
+      .ant-typography {
+        .popup-container {
+          .popup-btn {
+            padding: 6px 10px;
+            width: 120px;
+            border: none;
+            background-color: transparent;
+            color: #3a3737;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            &:hover {
+              background-color: #f3f0c8;
+              border-radius: 4px;
+            }
+            p {
+              margin: 0;
+            }
           }
         }
       }
+    }
+  }
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .content-detail {
+      padding: 24;
+      min-height: 360;
+      margin: 0 12px;
+    }
+  }
+  .footer {
+    flex-shrink: 0;
+    background-color: #ebeaea;
+    height: 48px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    p {
+      font-weight: 500;
     }
   }
 }

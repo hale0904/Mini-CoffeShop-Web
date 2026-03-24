@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PieChartOutlined, UserOutlined } from '@ant-design/icons';
+import { PieChartOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, Modal, Spin, theme, Typography } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import Popper, { type PopperPlacementType } from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Paper from '@mui/material/Paper';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { menuIconMap, subMenuIcon } from '../menudata/menudata';
 
 const { Footer, Sider, Content } = Layout;
 
@@ -57,25 +58,52 @@ const layoutDefault: React.FC = () => {
     };
 
   const loadFeatures = async () => {
-    try {
-      const res = await MenuService();
-      const data = res.data;
+    setLoading(true);
 
+    try {
+      let data;
+
+      const cached = localStorage.getItem('menu');
+
+      // 1. lấy từ cache (raw data)
+      if (cached) {
+        data = JSON.parse(cached);
+      } else {
+        const res = await MenuService();
+        data = res.data;
+
+        // lưu raw data
+        localStorage.setItem('menu', JSON.stringify(data));
+      }
+
+      // 2. build menu từ data (LUÔN luôn)
       const menus: MenuItem[] = data.map((feature: any) =>
         getItem(
           feature.name,
           feature.code,
-          <PieChartOutlined />,
-          feature.menu.map((m: any) => getItem(m.name, m.path, <UserOutlined />)),
+          menuIconMap[feature.code] ? (
+            React.createElement(menuIconMap[feature.code])
+          ) : (
+            <PieChartOutlined />
+          ),
+          feature.menu.map((m: any) =>
+            getItem(
+              m.name,
+              m.path,
+              subMenuIcon[m.code] ? React.createElement(subMenuIcon[m.code]) : <PieChartOutlined />,
+            ),
+          ),
         ),
       );
 
       setMenuItems(menus);
     } catch (error) {
       console.error('Load menu error', error);
+      localStorage.removeItem('menu'); // 👈 clear nếu lỗi
+    } finally {
+      setLoading(false);
     }
   };
-
   const handleLogout = () => {
     Modal.confirm({
       title: 'Xác nhận',
@@ -87,6 +115,7 @@ const layoutDefault: React.FC = () => {
         LogoutService().then(() => {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
+          localStorage.removeItem('menu');
           navigate('/login');
           setLoading(false);
         });
@@ -95,72 +124,73 @@ const layoutDefault: React.FC = () => {
   };
 
   return (
-    <Spin spinning={loading}>
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        theme="light"
-        onCollapse={(value) => setCollapsed(value)}
-      >
-        <div className="logo-container">
-          <img src={logo} alt="logo" className="logo" />
-        </div>
-        <Menu theme="light" mode="inline" items={menuItems} onClick={(e) => navigate(e.key)} />
-      </Sider>
-
-      <Layout>
-        <Header className="header-layout">
-          <div className="header-logo-container">
-            <img
-              src={logo}
-              alt="logo"
-              className="header-logo"
-              onClick={handleClick('bottom-end')}
-              style={{ cursor: 'pointer' }}
-            />
-          </div>
-        </Header>
-        <Popper
-          sx={{ zIndex: 1200 }}
-          open={openProfile}
-          anchorEl={anchorEl}
-          placement={placement}
-          transition
-          className="popper-container"
+    <Spin spinning={loading} className="spin">
+      <Layout className="layout">
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          theme="light"
+          onCollapse={(value) => setCollapsed(value)}
         >
-          {({ TransitionProps }) => (
-            <Fade {...TransitionProps} timeout={350}>
-              <Paper>
-                <Typography>
-                  <div className="popup-container">
-                    <button className="popup-btn" onClick={handleLogout}>
-                      <LogoutIcon sx={{ fontSize: 16, mr: 1 }} />
-                      <p>Đăng xuất</p>
-                    </button>
-                  </div>
-                </Typography>
-              </Paper>
-            </Fade>
-          )}
-        </Popper>
-        <Content style={{ margin: '0 16px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }} />
-          <div
-            style={{
-              padding: 24,
-              minHeight: 360,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            <Outlet />
+          <div className="logo-container">
+            <img src={logo} alt="logo" className="logo" />
           </div>
-        </Content>
+          <Menu theme="light" mode="inline" items={menuItems} onClick={(e) => navigate(e.key)} />
+        </Sider>
 
-        <Footer style={{ textAlign: 'center' }}>Hale Coffee ©{new Date().getFullYear()}</Footer>
+        <Layout>
+          <Header className="header-layout">
+            <div className="header-logo-container">
+              <img
+                src={logo}
+                alt="logo"
+                className="header-logo"
+                onClick={handleClick('bottom-end')}
+                style={{ cursor: 'pointer' }}
+              />
+            </div>
+          </Header>
+          <Popper
+            sx={{ zIndex: 1200 }}
+            open={openProfile}
+            anchorEl={anchorEl}
+            placement={placement}
+            transition
+            className="popper-container"
+          >
+            {({ TransitionProps }) => (
+              <Fade {...TransitionProps} timeout={350}>
+                <Paper>
+                  <Typography>
+                    <div className="popup-container">
+                      <button className="popup-btn" onClick={handleLogout}>
+                        <LogoutIcon sx={{ fontSize: 16, mr: 1 }} />
+                        <p>Đăng xuất</p>
+                      </button>
+                    </div>
+                  </Typography>
+                </Paper>
+              </Fade>
+            )}
+          </Popper>
+          <Content className="content">
+            <Breadcrumb style={{ margin: '16px 0' }} />
+            <div
+              className="content-detail"
+              style={{
+                background: colorBgContainer,
+                borderRadius: borderRadiusLG,
+              }}
+            >
+              <Outlet />
+            </div>
+          </Content>
+
+          <Footer className="footer">
+            <p>Hale Coffee ©2026</p>
+          </Footer>
+        </Layout>
       </Layout>
-    </Layout>
     </Spin>
   );
 };
