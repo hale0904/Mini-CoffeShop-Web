@@ -1,5 +1,5 @@
 import apiHelper from '../../../shared/helpers/api.helper';
-import { AUTH_API } from '../../../shared/constants/auth-api.constant';
+import { AUTH_API } from '../../../shared/api/auth.api';
 import type { Account } from '../dtos/user.dto';
 
 /**

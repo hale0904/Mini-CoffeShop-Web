@@ -1,65 +1,83 @@
-.login-container {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  .login-image {
-    flex: 3;
-    width: 100%;
-    height: 100vh;
+@use '../../../assets/styles/variables' as *;
 
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-  }
-  .login-form {
-    flex: 1;
+.pageLogin {
+  .login-container {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 20px;
-    margin-left: 20px;
+    .login-image {
+      flex: 3;
+      width: 100%;
+      height: 100vh;
 
-    .login-form-title {
-      text-align: center;
-      font-size: 30px;
-      font-weight: 500;
-      padding-bottom: 20px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
     }
-
-    .login-form-content {
+    .login-form {
+      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 20px;
+      margin-left: 20px;
 
-      input {
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-
-        &:hover {
-          border: 1px solid #9b8c4c;
-        }
-
-        &:focus {
-          border: 1px solid #9b8c4c;
-          outline: none;
-        }
+      .login-form-title {
+        text-align: center;
+        font-size: 30px;
+        font-weight: 600;
+        padding-bottom: 18px;
       }
 
-      button {
-        padding: 10px;
-        font-size: 16px;
-        background-color: #9b8c4c;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
+      .login-form-content {
+        display: flex;
+        flex-direction: column;
+        .login-form-email {
+          font-size: 16px;
+          color: $gray-600;
+          padding-bottom: 8px;
+        }
 
-        &:hover {
-          background-color: #665920;
+        .login-form-pw {
+          font-size: 16px;
+          color: $gray-600;
+          padding-bottom: 8px;
+          padding-top: 16px;
+        }
+
+        .inputForm {
+          padding: 10px;
+          font-size: 14px;
+          border: 1px solid $gray-300;
+          border-radius: 4px;
+
+          &:hover {
+            border: 1px solid $blue-300;
+            transition: 400ms;
+          }
+
+          &:focus {
+            border: 1px solid $blue-300;
+            outline: none;
+          }
+        }
+
+        button {
+          margin-top: 20px;
+          padding: 10px;
+          font-size: 16px;
+          background-color: $blue-400;
+          color: $white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+
+          &:hover {
+            background-color: $blue-500;
+            transition: 400ms;
+          }
         }
       }
     }
