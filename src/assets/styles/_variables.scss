@@ -1,15 +1,47 @@
-// Màu chính
-$color-primary: #1677ff;
-$color-secondary: #13c2c2;
+$blue-50:  #e6f4ff;
+$blue-100: #bae0ff;
+$blue-200: #91caff;
+$blue-300: #69b1ff;
+$blue-400: #4096ff;
+$blue-500: #1677ff; // PRIMARY
+$blue-600: #0958d9;
+$blue-700: #003eb3;
+$blue-800: #002c8c;
+$blue-900: #001d66;
+$green-50:  #f6ffed;
+$green-100: #d9f7be;
+$green-200: #b7eb8f;
+$green-300: #95de64;
+$green-400: #73d13d;
+$green-500: #52c41a;
+$green-600: #389e0d;
+$gray-50:  #fafafa;
+$gray-100: #f5f5f5;
+$gray-200: #f0f0f0;
+$gray-300: #d9d9d9;
+$gray-400: #bfbfbf;
+$gray-500: #8c8c8c;
+$gray-600: #595959;
+$gray-700: #434343;
+$gray-800: #262626;
+$gray-900: #1f1f1f;
+$white: #ffffff;
+$white-soft: #fafafa;
+$white-muted: #f5f5f5;
+$black: #000000;
+$black-soft: #141414;
+$black-light: #1f1f1f;
+
+// Text
+$text-primary:   rgba(0, 0, 0, 0.88);
+$text-secondary: rgba(0, 0, 0, 0.65);
+$text-disabled:  rgba(0, 0, 0, 0.25);
+$text-white:     #ffffff;
+$text-grid: #585858;
+$text-note: #fc4747;
+
+// STATUS
+$color-success: #52c41a;
 $color-danger: #ff4d4f;
 $color-warning: #faad14;
-$color-success: #52c41a;
-
-// Màu nền
-$bg-main: #f5f5f5;
-$bg-white: #ffffff;
-
-// Màu chữ
-$text-main: #333;
-$text-light: #999;
-$text-white: #fff;
+$color-secondary: #13c2c2;
