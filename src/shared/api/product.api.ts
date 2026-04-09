@@ -1,6 +1,8 @@
 export const CATEGORY_API = {
   getListCategory: '/api/getListCategory',
   updateCategory: '/api/updateCategory',
+  deleteCategory: '/api/deleteCategory',
+  getListCateProduct: '/api/getListCateProduct'
 };
 
 export const PRODUCT_API = {
