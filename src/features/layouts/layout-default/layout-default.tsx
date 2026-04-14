@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PieChartOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Breadcrumb, Layout, Menu, Modal, Spin, theme, Typography } from 'antd';
+import { Layout, Menu, Modal, Spin, Typography } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Header } from 'antd/es/layout/layout';
-import { DTOFeature } from '../dtos/feature.dto';
-import { FeatureService, LogoutService, MenuService } from '../services/feature.service';
-import type { DTOMenu } from '../dtos/menu.dto';
+import { LogoutService, MenuService } from '../services/feature.service';
 import logo from '../../../assets/logo.jpg';
 import './layout-default.scss';
 import Popper, { type PopperPlacementType } from '@mui/material/Popper';
@@ -30,18 +28,13 @@ function getItem(
 
 const layoutDefault: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [features, setFeatures] = useState<DTOMenu[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [openProfile, setOpenProfile] = useState(false);
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [placement, setPlacement] = React.useState<PopperPlacementType>('bottom-end');
   const [loading, setLoading] = useState<boolean>(false);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
-  // lifecycle tương đương ngOnInit
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
   const calledRef = useRef(false);
 
   useEffect(() => {
@@ -50,6 +43,7 @@ const layoutDefault: React.FC = () => {
     loadFeatures();
   }, []);
 
+  // Xử lý mở menu profile
   const handleClick =
     (newPlacement: PopperPlacementType) => (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
@@ -57,6 +51,7 @@ const layoutDefault: React.FC = () => {
       setPlacement(newPlacement);
     };
 
+  // Load menu từ API hoặc cache
   const loadFeatures = async () => {
     setLoading(true);
 
@@ -65,18 +60,15 @@ const layoutDefault: React.FC = () => {
 
       const cached = localStorage.getItem('menu');
 
-      // 1. lấy từ cache (raw data)
       if (cached) {
         data = JSON.parse(cached);
       } else {
         const res = await MenuService();
         data = res.data;
 
-        // lưu raw data
         localStorage.setItem('menu', JSON.stringify(data));
       }
 
-      // 2. build menu từ data (LUÔN luôn)
       const menus: MenuItem[] = data.map((feature: any) =>
         getItem(
           feature.name,
@@ -97,13 +89,34 @@ const layoutDefault: React.FC = () => {
       );
 
       setMenuItems(menus);
+      // tìm parent theo route hiện tại
+      const activeParent = data.find((feature: any) =>
+        feature.menu.some((m: any) => m.path === location.pathname),
+      );
+
+      if (activeParent) {
+        setOpenKeys([activeParent.code]);
+      } else {
+        // nếu chưa có route cụ thể thì mở menu đầu tiên
+        if (data?.length > 0) {
+          setOpenKeys([data[0].code]);
+        }
+
+        // nếu đang ở root thì tự chuyển vào menu đầu tiên
+        const firstMenuPath = data?.[0]?.menu?.[0]?.path;
+
+        if ((location.pathname === '/' || location.pathname === '') && firstMenuPath) {
+          navigate(firstMenuPath);
+        }
+      }
     } catch (error) {
-      console.error('Load menu error', error);
-      localStorage.removeItem('menu'); // 👈 clear nếu lỗi
+      localStorage.removeItem('menu');
     } finally {
       setLoading(false);
     }
   };
+
+  // Xử lý đăng xuất
   const handleLogout = () => {
     Modal.confirm({
       title: 'Xác nhận',
@@ -123,6 +136,7 @@ const layoutDefault: React.FC = () => {
     });
   };
 
+  //#region UI
   return (
     <Spin spinning={loading} className="spin">
       <Layout className="layout">
@@ -135,7 +149,15 @@ const layoutDefault: React.FC = () => {
           <div className="logo-container">
             <img src={logo} alt="logo" className="logo" />
           </div>
-          <Menu theme="light" mode="inline" items={menuItems} onClick={(e) => navigate(e.key)} />
+          <Menu
+            theme="light"
+            mode="inline"
+            items={menuItems}
+            selectedKeys={[location.pathname]}
+            onOpenChange={(keys) => setOpenKeys(keys as string[])}
+            onClick={(e) => navigate(e.key)}
+            openKeys={openKeys}
+          />
         </Sider>
 
         <Layout>
@@ -159,29 +181,20 @@ const layoutDefault: React.FC = () => {
             className="popper-container"
           >
             {({ TransitionProps }) => (
-              <Fade {...TransitionProps} timeout={350}>
+              <Fade {...TransitionProps} timeout={350} >
                 <Paper>
-                  <Typography>
                     <div className="popup-container">
                       <button className="popup-btn" onClick={handleLogout}>
                         <LogoutIcon sx={{ fontSize: 16, mr: 1 }} />
                         <p>Đăng xuất</p>
                       </button>
-                    </div>
-                  </Typography>
+                    </div>  
                 </Paper>
               </Fade>
             )}
           </Popper>
           <Content className="content">
-            <Breadcrumb style={{ margin: '16px 0' }} />
-            <div
-              className="content-detail"
-              style={{
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-              }}
-            >
+            <div className="content-detail">
               <Outlet />
             </div>
           </Content>

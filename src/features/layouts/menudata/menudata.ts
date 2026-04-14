@@ -10,6 +10,11 @@ import {
   ApartmentOutlined,
   BarsOutlined,
   MenuOutlined,
+  CopyOutlined,
+  AuditOutlined,
+  UserAddOutlined,
+  AppstoreOutlined,
+  CoffeeOutlined,
 } from '@ant-design/icons';
 
 export const menuIconMap: any = {
@@ -17,6 +22,7 @@ export const menuIconMap: any = {
   FT001: TeamOutlined,
   FT002: SettingOutlined,
   FT003: ProductOutlined,
+  FT004: CoffeeOutlined,
 };
 
 export const subMenuIcon: any = {
@@ -25,5 +31,9 @@ export const subMenuIcon: any = {
   MN003: UserSwitchOutlined,
   MN004: ApartmentOutlined,
   MN005: BarsOutlined,
-  MN006: MenuOutlined
+  MN006: MenuOutlined,
+  MN007: AuditOutlined,
+  MN008: UserAddOutlined,
+  MN009: CopyOutlined, 
+  MN010: AppstoreOutlined
 };

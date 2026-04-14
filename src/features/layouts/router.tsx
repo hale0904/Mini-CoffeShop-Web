@@ -4,6 +4,7 @@ import LayoutDefault from "./layout-default/layout-default";
 import { hrRoutes } from "../hri/routes";
 import { configRoutes } from "../config/routes";
 import { productRoutes } from "../product/routes";
+import { selltRoutes } from "../sell/routes";
 
 export const layoutRoutes: RouteObject[] = [
   {
@@ -20,6 +21,7 @@ export const layoutRoutes: RouteObject[] = [
           ...hrRoutes,
           ...configRoutes,
           ...productRoutes,
+          ...selltRoutes
         ],
       },
     ],
