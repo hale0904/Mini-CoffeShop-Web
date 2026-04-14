@@ -1,5 +1,8 @@
 import { Outlet, type RouteObject } from 'react-router-dom';
 import ListStaff from './pages/listStaff/listStaff';
+import TypeOfContract from './pages/typeOfContract/typeOfContract';
+import TypeOfPersonnel from './pages/typeOfPersonnel/typeOfPersonnel';
+import TypeOfPosition from './pages/typeOfPosition/typeOfPosition';
 
 export const hrRoutes: RouteObject[] = [
   {
@@ -13,6 +16,18 @@ export const hrRoutes: RouteObject[] = [
       {
         path: 'listHr',
         element: <ListStaff />,
+      },
+      {
+        path:'typeOfPersonnel',
+        element: <TypeOfPersonnel />
+      },
+      {
+        path:'contractType',
+        element: <TypeOfContract />
+      },
+      {
+        path:'listPosition',
+        element: <TypeOfPosition />
       },
     ],
   },

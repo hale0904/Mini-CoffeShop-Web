@@ -1,0 +1,412 @@
+@use '../../../../assets/styles/variables' as *;
+
+.breadcrumb {
+  padding: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  .ant-breadcrumb-item {
+    display: flex;
+    .breadcrumb-itemB {
+      display: flex;
+      align-items: center;
+      color: $blue-700;
+      padding: 4px 6px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+
+      &:hover {
+        // border: 1px solid $blue-200;
+        background-color: $gray-250;
+        transition: 400ms;
+      }
+    }
+    .breadcrumb-itemA {
+      display: flex;
+      align-items: center;
+      color: $blue-700;
+      padding: 4px;
+      border-radius: 8px;
+      svg {
+        color: $gray-500;
+      }
+    }
+  }
+}
+
+.ant-breadcrumb-separator {
+  padding: 4px 0;
+}
+
+.typeHr {
+  min-height: 75vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin: 10px 0 20px;
+  background-color: $white;
+  border-radius: 20px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    .filter-container {
+      align-items: center;
+      gap: 8px;
+      .filter-content {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 6px;
+        .filter-icon {
+          font-size: 30px;
+        }
+      }
+      .search-field-container {
+        margin-left: 4px;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        .search-field {
+          label {
+            font-size: 12px;
+          }
+          .MuiInputBase-root {
+            input {
+              font-size: 12px;
+              padding: 8px 12px;
+              width: 220px;
+            }
+            fieldset {
+              border: 1px solid $gray-300;
+            }
+            &:hover fieldset {
+              border-color: $blue-300;
+              transition: 400ms;
+            }
+
+            &.Mui-focused fieldset {
+              border-color: $blue-300;
+            }
+          }
+        }
+        .btn-search {
+          padding: 9px 12px;
+          background-color: $blue-400;
+          .icon-search {
+            font-size: 16px;
+            color: $white;
+          }
+          &:hover {
+            background-color: $blue-500;
+            transition: 400ms;
+          }
+        }
+
+        .line {
+          font-size: 20px;
+          color: $gray-500;
+          margin-bottom: 4px;
+        }
+
+        .btn-reset {
+          padding: 5.5px 12px;
+          color: $gray-400;
+          font-size: 12px;
+          border: 1px solid $gray-400;
+          text-align: center;
+
+          &:hover {
+            border: 1px solid $blue-400;
+            color: $blue-400;
+            transition: 400ms;
+          }
+        }
+      }
+
+      .checkbox {
+        display: flex;
+        align-items: center;
+        margin: 16px 0;
+        .checkbox-title {
+          font-size: 14px;
+          padding: 0 4px;
+        }
+
+        .checkbox-container {
+          margin-left: 4px;
+
+          .checkbox-item {
+            padding: 5px 8px 5px 12px;
+            border: 1px solid $gray-300;
+            border-radius: 16px;
+            margin-right: 12px;
+            font-size: 13px;
+
+            .ant-checkbox {
+              margin-left: 4px;
+            }
+
+            &:hover {
+              border-color: $blue-300;
+              transition: 400ms;
+            }
+
+            &.ant-checkbox-wrapper-checked {
+              border-color: $blue-300;
+              background: $blue-50;
+            }
+          }
+        }
+      }
+    }
+    .btn-container {
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 16px;
+      gap: 8px;
+      .btn-add {
+        font-size: 14px;
+        font-weight: 500;
+        padding: 9px 16px;
+        background-color: $blue-400;
+        border: none;
+        color: $white;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover {
+          background-color: $blue-500;
+          transition: 400ms;
+        }
+      }
+      .btn-delete {
+        padding: 7px 16px;
+        background-color: $white;
+        border: 1px solid $red-300;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: 400ms;
+
+        .icon {
+          font-size: 15px;
+          color: $red-300;
+          transition: 400ms;
+        }
+
+        &:hover {
+          border: 1px solid $red-500;
+
+          .icon {
+            color: $red-500;
+          }
+        }
+      }
+    }
+  }
+
+  .grid {
+    flex: 1; // chiếm phần còn lại
+    width: 100%;
+    overflow: hidden; // để DataGrid tự scroll
+    font-size: 13px;
+    min-height: 60vh;
+    .MuiDataGrid-cell:focus {
+      outline: none;
+    }
+
+    .MuiDataGrid-cell:focus-within {
+      outline: none;
+    }
+
+    // BỎ NỀN XANH KHI SELECT ROW
+    .MuiDataGrid-row.Mui-selected {
+      background-color: transparent;
+    }
+    .MuiDataGrid-mainContent {
+      .MuiDataGrid-main {
+        .MuiDataGrid-topContainer {
+          .MuiDataGrid-columnHeaders {
+            .MuiDataGrid-columnHeader {
+              font-size: 12.6px;
+            }
+          }
+        }
+        .MuiDataGrid-row {
+          color: $text-grid;
+        }
+      }
+    }
+    .MuiTablePagination-root {
+      font-size: 12px;
+      .MuiTablePagination-selectLabel {
+        font-size: 12px;
+      }
+      .MuiTablePagination-displayedRows {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+.modal-typeHr {
+  .ant-modal-content {
+    border-radius: 8px;
+  }
+
+  .ant-modal-header {
+    background: $white;
+  }
+
+  .ant-modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: $black;
+    display: flex;
+    justify-content: center;
+  }
+
+  .ant-modal-body {
+    padding: 16px 20px;
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      .form-container {
+        gap: 12px;
+        display: flex;
+        flex-direction: column;
+        .form-container-label {
+          font-size: 14px;
+          font-weight: 500;
+          color: $gray-800;
+          display: flex;
+          gap: 5px;
+          .form-label_note {
+            color: $text-note;
+          }
+        }
+        .form-container-input {
+          padding: 8px 12px;
+          border: 1px solid $gray-400;
+          border-radius: 4px;
+          font-size: 14px;
+          &:focus {
+            outline: none;
+            border-color: $blue-300;
+          }
+        }
+      }
+      .form-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: $gray-800;
+        display: flex;
+        gap: 5px;
+        .form-label_note {
+          color: $text-note;
+        }
+      }
+      .form-input {
+        padding: 8px 12px;
+        border: 1px solid $gray-400;
+        border-radius: 4px;
+        font-size: 14px;
+        &:focus {
+          outline: none;
+          border-color: $blue-300;
+        }
+      }
+      .form-dropdown {
+        .ant-select-content {
+          input {
+            border: none;
+          }
+        }
+      }
+    }
+    .form-btn {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+      .btn-cancel {
+        padding: 8px 16px;
+        background-color: $gray-200;
+        border: none;
+        color: $gray-800;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover {
+          background-color: $gray-300;
+          transition: 400ms;
+        }
+      }
+      .form-btn-submit {
+        padding: 8px 16px;
+        background-color: $blue-400;
+        border: none;
+        color: $white;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover {
+          background-color: $blue-500;
+          transition: 400ms;
+        }
+      }
+
+      .form-btn-delete {
+        padding: 8px 16px;
+        background-color: $red-300;
+        border: none;
+        color: $white;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover {
+          background-color: $red-500;
+          transition: 400ms;
+        }
+      }
+    }
+  }
+
+  .ant-modal-close {
+    color: $gray-800;
+  }
+}
+
+.modal-delete {
+  .ant-modal-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .ant-modal-body {
+      .modal {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-end;
+        .model-btn-delete {
+          width: 120px;
+          padding: 8px 16px;
+          background-color: $blue-400;
+          border: none;
+          color: $white;
+          border-radius: 4px;
+          cursor: pointer;
+          &:hover {
+            background-color: $blue-500;
+            transition: 400ms;
+          }
+          .btn-content {
+            font-size: 11px;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}
