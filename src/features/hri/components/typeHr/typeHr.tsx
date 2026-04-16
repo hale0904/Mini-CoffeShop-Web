@@ -196,6 +196,7 @@ const TypeHr = ({ breadcumb, valueSearch, typeData, form }: TypeHrProps) => {
   // Xử lý mở modal thêm mới
   const addModal = () => {
     setMode('add');
+    setSelectedTypeHR(null);
     reset({ ...formTypeHr, code: '0' });
     setIsModalOpen(true);
   };
@@ -291,6 +292,7 @@ const TypeHr = ({ breadcumb, valueSearch, typeData, form }: TypeHrProps) => {
       })
       .catch((error) => {
         setLoading(false);
+        setIsModalOpen(false);
         notificationService.error('Lỗi: Cập nhật danh mục thất bại!');
       });
   }
@@ -301,11 +303,13 @@ const TypeHr = ({ breadcumb, valueSearch, typeData, form }: TypeHrProps) => {
     DeleteTypeHrService(data)
       .then(() => {
         setLoading(false);
+        setIsModalOpen(false);
         notificationService.success('Xóa dữ liệu thành công!');
         APIGetListTypeHr();
       })
       .catch((error) => {
         setLoading(false);
+        setIsModalOpen(false);
         notificationService.error('Lỗi: Xóa danh mục thất bại!');
       });
   };
@@ -457,8 +461,13 @@ const TypeHr = ({ breadcumb, valueSearch, typeData, form }: TypeHrProps) => {
                     id={String(name)}
                     {...register(name)}
                     placeholder={item.titleField}
-                    disabled={item.disabledForm}
+                    // disabled={item.disabledForm}
                     className="form-container-input"
+                    disabled={
+                      selectedTypeHr?.status === 1 ||
+                      selectedTypeHr?.status === 2 ||
+                      item.disabledForm
+                    }
                   />
                 </div>
               );

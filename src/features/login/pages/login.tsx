@@ -4,7 +4,6 @@ import type { Account } from '../dtos/user.dto';
 import AuthHelper from '../../../shared/auth/auth.helper';
 import './login.scss';
 import slider1 from '../../../assets/slider1.jpg';
-import { Alert } from 'antd';
 import { Spin } from 'antd';
 import { utilitiesObjService } from '../../../shared/utilities/utilitiesObjService';
 import { notificationService } from '../../../shared/notification';
@@ -47,13 +46,14 @@ function Login() {
       });
       setLoading(false);
       notificationService.success('Đăng nhập thành công!');
-      navigate('/');
+      navigate('/sell/sellProduct');
     } catch (error) {
       setLoading(false);
       notificationService.error('Đăng nhập thất bại');
     }
   };
 
+  // #region UI
   return (
     <div className="pageLogin">
       <Spin spinning={loading}>
@@ -80,12 +80,6 @@ function Login() {
 
               <button type="submit">Đăng nhập</button>
             </form>
-            {/* {errorMsg && (
-              <Alert type="error" message={errorMsg} showIcon style={{ marginBottom: 12 }} />
-            )}
-            {successMsg && (
-              <Alert type="success" message={successMsg} showIcon style={{ marginBottom: 12 }} /> */}
-            {/* )} */}
           </div>
           <div className="login-image">
             <img src={slider1} alt="slider1" />

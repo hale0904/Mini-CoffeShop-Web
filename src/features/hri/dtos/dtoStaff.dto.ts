@@ -2,15 +2,13 @@ export class DTOStaff {
   code: string = '';
   userName: string = '';
   email: string = '';
-  password: string = '';
-  dateOfBirth: Date | string = '';
+  dateOfBirth: string = '';
   loactionName: string = '';
-  roleStaff: string = '';
-  roleStaffName: string = '';
+  typeOfPosition: string = '';
   phone: number = 0;
   typeOfPersonnel: string = '';
   typeOfContract: string = '';
-  cccd: string = '';
+  cccd: number = 0;
   status: number = 0;
   statusName: string = '';
 }
