@@ -1,6 +1,7 @@
 import { DTOCategory } from '../../dtos/dtoCategory.dto';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
+import { Breadcrumb } from 'antd';
 import { Checkbox, Modal, Spin } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
@@ -8,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListAltIcon from '@mui/icons-material/FilterListAlt';
 import {
+  DeleteCategoryStaffService,
   GetListCategoryService,
   UpdateCategoryStaffService,
 } from '../../services/category.service';
@@ -19,6 +21,8 @@ import './listCategory.scss';
 import { Select } from 'antd';
 import { notificationService } from '../../../../shared/notification';
 import { utilitiesObjService } from '../../../../shared/utilities/utilitiesObjService';
+import { HomeOutlined } from '@mui/icons-material';
+import { getStatus } from '../../../../shared/utilities/status.util';
 
 function listCategory() {
   const calledRef = useRef(false);
@@ -27,22 +31,25 @@ function listCategory() {
   const [selectedCategory, setSelectedCategory] = useState<DTOCategory | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [checkboxEdit, setCheckboxEdit] = useState<boolean>(false);
-  const [checkboxActive, setCheckboxActive] = useState<boolean>(false);
-  const [checkboxNotActive, setCheckboxNotActive] = useState<boolean>(false);
-  const [name, setName] = useState('');
-
-  useEffect(() => {
-    if (calledRef.current) return;
-    calledRef.current = true;
-    APIGetListCategory();
-  }, []);
+  const [statuses, setStatuses] = useState<number[]>([]);
+  const [search, setSearch] = useState<string>('');
+  const [selectedRows, setSelectedRows] = useState<DTOCategory[]>([]);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const columns: GridColDef<DTOCategory>[] = [
     { field: 'code', headerName: 'Mã danh mục', flex: 1, minWidth: 180 },
     { field: 'name', headerName: 'Tên danh mục', flex: 1, minWidth: 250 },
     { field: 'description', headerName: 'Mô tả', flex: 2, minWidth: 300 },
-    { field: 'statusName', headerName: 'Trạng thái', flex: 1, minWidth: 150 },
+    {
+      field: 'status',
+      headerName: 'Trạng thái',
+      flex: 1,
+      renderCell: (params) => {
+        const status = getStatus(params.value);
+
+        return <span className={status.className}>{status.label}</span>;
+      },
+    },
     {
       field: 'actions',
       headerName: 'Thao tác',
@@ -59,7 +66,11 @@ function listCategory() {
               <EditIcon />
             </IconButton>
 
-            <IconButton color="error" onClick={() => console.log()}>
+            <IconButton
+              color="error"
+              onClick={() => handleDelete(row)}
+              disabled={row.status === 1 || row.status === 2}
+            >
               <DeleteIcon />
             </IconButton>
           </>
@@ -69,6 +80,7 @@ function listCategory() {
   ];
 
   const formCategori: DTOCategory = {
+    _id: '',
     code: '0',
     name: '',
     description: '',
@@ -80,41 +92,45 @@ function listCategory() {
     defaultValues: formCategori,
   });
 
+  useEffect(() => {
+    if (calledRef.current) return;
+    calledRef.current = true;
+    APIGetListCategory();
+  }, []);
+
+  // #region Breadcrumb
+  function onBreadcrumb() {
+    fetchData();
+  }
+
+  //#region Modal
+  // Mở modal thêm mới
   const addModal = () => {
     setMode('add');
+    setSelectedCategory(null);
     reset({ ...formCategori, code: '0' });
     setIsModalOpen(true);
   };
 
+  // Đóng modal
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
-  function handleEdit(category: DTOCategory) {
-    setMode('edit');
-    setSelectedCategory(category);
-    reset(category);
-    setIsModalOpen(true);
-  }
-
+  // Submit form
   const onSubmit = (data: DTOCategory) => {
-    if (!utilitiesObjService.hasValueString(formCategori.name)) {
+    if (!utilitiesObjService.hasValueString(data?.name)) {
       notificationService.error('Lỗi: Vui lòng nhập tên danh mục!');
       return;
     }
-    if (!utilitiesObjService.hasValueString(formCategori.description)) {
+    if (!utilitiesObjService.hasValueString(data?.description)) {
       notificationService.error('Lỗi: Vui lòng nhập mô tả!');
       return;
     }
-    if (data.code === '0') {
-      // API create
-      APIUpdateCategory(data);
-    } else {
-      // API update
-      APIUpdateCategory(data);
-    }
+    APIUpdateCategory(data);
   };
 
+  // Xử lý option dropdown trạng thái
   const handelOptionDropdown = () => {
     if (mode === 'add') {
       return [{ label: 'Đang chỉnh sửa', value: 0 }];
@@ -137,50 +153,88 @@ function listCategory() {
         return [
           { label: 'Đang chỉnh sửa', value: 0 },
           { label: 'Đang Hoạt động', value: 1 },
+          { label: 'Ngưng hoạt động', value: 2 },
         ];
     }
   };
 
-  const onChangeCheckbox = (e: any, status: number) => {
-    const checked = e.target.checked;
-    const dataCategory = new DTOCategory();
-
-    if (status === 0) {
-      setCheckboxEdit(checked);
-
-      if (checked) {
-        dataCategory.status = 0;
-        APIGetListCategory(dataCategory);
-      }
-    }
-
-    if (status === 1) {
-      setCheckboxActive(checked);
-      if (checked) {
-        dataCategory.status = 1;
-        APIGetListCategory(dataCategory);
-      }
-    }
-
-    if (status === 2) {
-      setCheckboxNotActive(checked);
-
-      if (checked) {
-        dataCategory.status = 2;
-        APIGetListCategory(dataCategory);
-      }
-    }
+  // Mở modal xóa nhiều
+  const onOpenDeleteModal = () => {
+    setOpenDeleteModal(true);
   };
 
-  const onSearch = (name: string) => {
-    const dataCategory = new DTOCategory();
-    dataCategory.name = name;
-    APIGetListCategory(dataCategory);
+  // Xử lý xóa nhiều
+  const handleDeleteArray = (data: DTOCategory[]) => {
+    APIDeleteCategory(data);
+    setOpenDeleteModal(false);
   };
 
-  // #region API
+  //#region Button grid
+  // Xử lý cập nhật
+  function handleEdit(category: DTOCategory) {
+    setMode('edit');
+    setSelectedCategory(category);
+    reset(category);
+    setIsModalOpen(true);
+  }
 
-  // API GETLIST
+  // Xử lý xóa
+  const handleDelete = (item: DTOCategory) => {
+    Modal.confirm({
+      title: 'XÁC NHẬN',
+      content: `Bạn có chắc chắn muốn xóa Danh mục ${item.name} này không?`,
+      okText: 'Xóa',
+      cancelText: 'Hủy',
+      onOk: () => {
+        APIDeleteCategory([{ code: item.code } as DTOCategory]);
+      },
+    });
+  };
+
+  // #region Search, filter
+  // Xử lý sự kiện khi checkbox thay đổi
+  const onChangeCheckbox = (status: number) => {
+    let newStatuses = [...statuses];
+
+    if (newStatuses.includes(status)) {
+      newStatuses = newStatuses.filter((s) => s !== status);
+    } else {
+      newStatuses.push(status);
+    }
+
+    setStatuses(newStatuses);
+
+    APIGetListCategory({
+      keyword: search,
+      status: newStatuses,
+    });
+  };
+
+  // Xử lý sự kiện khi search
+  const onSearch = () => {
+    fetchData();
+  };
+
+  // Hàm dùng chung để gọi API với filter
+  const fetchData = (custom = {}) => {
+    APIGetListCategory({
+      keyword: search,
+      status: statuses,
+      ...custom,
+    });
+  };
+
+  // Xử lý reset filter
+  const handleReset = () => {
+    setSearch('');
+    setStatuses([]);
+    fetchData({
+      keyword: '',
+      status: [],
+    });
+  };
+
+  //#region API GET LIST CATEGORY
   const APIGetListCategory = async (filter = {}) => {
     try {
       setLoading(true);
@@ -205,7 +259,7 @@ function listCategory() {
     }
   };
 
-  // API UpdateCategory
+  //#region API Update Category
   function APIUpdateCategory(data: DTOCategory) {
     setLoading(true);
     UpdateCategoryStaffService(data)
@@ -216,54 +270,94 @@ function listCategory() {
       })
       .catch((error) => {
         setLoading(false);
-        notificationService.error('Lỗi: Cập nhật danh mục thất bại!', error);
+        setIsModalOpen(false);
+        notificationService.error('Lỗi: Cập nhật danh mục thất bại!');
       });
   }
 
+  //#region API Delete Category
+  function APIDeleteCategory(data: DTOCategory[]) {
+    setLoading(true);
+    DeleteCategoryStaffService(data)
+      .then(() => {
+        setLoading(false);
+        setIsModalOpen(false);
+        notificationService.success('Xóa dữ liệu thành công!');
+        APIGetListCategory();
+      })
+      .catch((error) => {
+        setIsModalOpen(false);
+        setLoading(false);
+        notificationService.error('Lỗi: Xóa danh mục thất bại!');
+      });
+  }
+
+  //#region UI
   return (
     <Spin spinning={loading}>
+      <Breadcrumb
+        className="breadcrumb"
+        items={[
+          {
+            className: 'breadcrumb-item1',
+            title: <HomeOutlined />,
+          },
+          {
+            className: 'breadcrumb-item2',
+            title: 'DANH SÁCH DANH MỤC',
+            onClick: onBreadcrumb,
+          },
+        ]}
+      />
       <Box className="listCategory-container">
         <div className="header">
           <div className="filter-container">
             <div className="filter-content">
               <FilterListAltIcon className="filter-icon" />
-              Lọc dữ liệu
+              <p className="filter-title">Lọc dữ liệu</p>
             </div>
             <div className="search-field-container">
               Tìm kiếm
               <TextField
                 className="search-field"
                 variant="outlined"
-                placeholder="Tên"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                placeholder="Mã, Tên danh mục"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') onSearch();
+                }}
               />
-              <Button className="btn-search" onClick={() => onSearch(name)}>
+              <Button className="btn-search" onClick={() => onSearch()}>
                 <SearchIcon className="icon-search" />
+              </Button>
+              <div className="line"> | </div>
+              <Button className="btn-reset" onClick={handleReset}>
+                Xóa bộ lọc
               </Button>
             </div>
             <div className="checkbox">
               <span className="checkbox-title">Trạng thái:</span>
               <div className="checkbox-container">
                 <Checkbox
-                  checked={checkboxEdit}
-                  onChange={(e) => onChangeCheckbox(e, 0)}
+                  checked={statuses.includes(0)}
+                  onChange={() => onChangeCheckbox(0)}
                   className="checkbox-item"
                 >
                   Đang chỉnh sửa
                 </Checkbox>
 
                 <Checkbox
-                  checked={checkboxActive}
-                  onChange={(e) => onChangeCheckbox(e, 1)}
+                  checked={statuses.includes(1)}
+                  onChange={() => onChangeCheckbox(1)}
                   className="checkbox-item"
                 >
                   Hoạt động
                 </Checkbox>
 
                 <Checkbox
-                  checked={checkboxNotActive}
-                  onChange={(e) => onChangeCheckbox(e, 2)}
+                  checked={statuses.includes(2)}
+                  onChange={() => onChangeCheckbox(2)}
                   className="checkbox-item"
                 >
                   Ngưng hoạt động
@@ -272,6 +366,13 @@ function listCategory() {
             </div>
           </div>
           <div className="btn-add-container">
+            <button
+              className="btn-delete"
+              onClick={onOpenDeleteModal}
+              hidden={selectedRows.length === 0}
+            >
+              <DeleteIcon className="icon" />
+            </button>
             <button className="btn-add" onClick={addModal}>
               Thêm mới
             </button>
@@ -295,6 +396,23 @@ function listCategory() {
           disableColumnSorting
           disableColumnMenu
           disableColumnResize
+          isRowSelectable={(params) => params.row.status === 0}
+          onRowSelectionModelChange={(selectionModel) => {
+            let selected = [];
+
+            if (selectionModel.type === 'include') {
+              const ids = Array.from(selectionModel.ids);
+
+              selected = rows.filter((row) => ids.includes(row.code));
+              console.log(selected);
+            } else {
+              const excludedIds = Array.from(selectionModel.ids);
+
+              selected = rows.filter((row) => !excludedIds.includes(row.code));
+            }
+
+            setSelectedRows(selected);
+          }}
         />
       </Box>
       <Modal
@@ -303,6 +421,7 @@ function listCategory() {
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null}
+        loading={loading}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="modal-form">
           <label htmlFor="code" className="form-label">
@@ -315,13 +434,14 @@ function listCategory() {
             <p className="form-label_note">(*)</p>
           </label>
 
-          <input {...register('name')} placeholder="Tên danh mục đồ uống" className="form-input" />
+          <input {...register('name')} placeholder="Tên danh mục đồ uống" className="form-input" 
+          disabled={selectedCategory?.status === 1 || selectedCategory?.status === 2}/>
 
           <label htmlFor="description" className="form-label">
             <p>Mô tả</p>
             <p className="form-label_note">(*)</p>
           </label>
-          <input {...register('description')} placeholder="Mô tả" className="form-input" />
+          <input {...register('description')} placeholder="Mô tả" className="form-input" disabled={selectedCategory?.status === 1 || selectedCategory?.status === 2}/>
 
           <label htmlFor="statusName" className="form-label">
             <p>Trạng thái</p>
@@ -337,8 +457,8 @@ function listCategory() {
                 placeholder="Trạng thái"
                 onChange={(value) => field.onChange(value)}
                 value={field.value}
-                disabled={mode === 'add'}
                 options={handelOptionDropdown()}
+                className="form-dropdown"
               />
             )}
           />
@@ -347,11 +467,46 @@ function listCategory() {
             <button type="submit" className="form-btn-submit">
               {selectedCategory?.code === '0' || mode === 'add' ? 'Tạo mới' : 'Cập nhật'}
             </button>
+            <button
+              type="button"
+              className="form-btn-delete"
+              onClick={() => {
+                if (!selectedCategory) return;
+                handleDelete(selectedCategory);
+              }}
+              hidden={
+                selectedCategory?.code === '0' ||
+                mode === 'add' ||
+                selectedCategory?.status === 1 ||
+                selectedCategory?.status === 2
+              }
+            >
+              Xóa
+            </button>
             <button type="button" onClick={handleCancel} className="btn-cancel">
               Đóng
             </button>
           </div>
         </form>
+      </Modal>
+      <Modal
+        open={openDeleteModal}
+        title="XÓA THÔNG TIN"
+        onCancel={() => setOpenDeleteModal(false)}
+        footer={null}
+        centered
+        className="modal-delete"
+      >
+        <Box className="modal">
+          <p>
+            Bạn đã chọn {selectedRows.length} mục để xóa. Bạn có chắc chắn muốn xóa những mục này
+            không?
+          </p>
+
+          <Button className="model-btn-delete" onClick={() => handleDeleteArray(selectedRows)}>
+            <p className="btn-content">Xác nhận</p>
+          </Button>
+        </Box>
       </Modal>
     </Spin>
   );

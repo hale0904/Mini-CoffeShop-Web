@@ -9,3 +9,7 @@ export function GetListCategoryService(payload: any) {
 export function UpdateCategoryStaffService(payload: DTOCategory) {
   return apiHelper.post(CATEGORY_API.updateCategory, payload);
 }
+
+export function DeleteCategoryStaffService(payload: DTOCategory[]) {
+  return apiHelper.post(CATEGORY_API.deleteCategory, {items: payload});
+}

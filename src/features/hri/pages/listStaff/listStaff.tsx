@@ -213,13 +213,43 @@ function ListStaff() {
 
   // Xử lý khi submit form (cả tạo mới và cập nhật)
   const onSubmit = (data: DTOStaff) => {
-    if (data.code === '0') {
-      // API create
-      APIupdateStaff(data);
-    } else {
-      // API update
-      APIupdateStaff(data);
+    if (!utilitiesObjService.hasValueString(data?.userName)) {
+      notificationService.error('Lỗi: Vui lòng nhập tên nhân viên!');
+      return;
     }
+    if (!utilitiesObjService.hasValueString(data?.email)) {
+      notificationService.error('Lỗi: Vui lòng nhập email!');
+      return;
+    }
+    if (!utilitiesObjService.hasValueString(data?.dateOfBirth)) {
+      notificationService.error('Lỗi: Vui lòng nhập ngày sinh!');
+      return;
+    }
+    if (!utilitiesObjService.hasValueString(data?.loactionName)) {
+      notificationService.error('Lỗi: Vui lòng nhập tên địa điểm cư trú!');
+      return;
+    }
+    if (!utilitiesObjService.hasValue(data?.phone) || data?.phone === 0) {
+      notificationService.error('Lỗi: Vui lòng nhập số điện thoại!');
+      return;
+    }
+    if (!utilitiesObjService.hasValue(data?.cccd) || data?.cccd === 0) {
+      notificationService.error('Lỗi: Vui lòng nhập số căn cước công dân!');
+      return;
+    }
+    if (!utilitiesObjService.hasValueString(data?.typeOfPersonnel)) {
+      notificationService.error('Lỗi: Vui lòng nhập loại hình nhân sự!');
+      return;
+    }
+    if (!utilitiesObjService.hasValueString(data?.typeOfPosition)) {
+      notificationService.error('Lỗi: Vui lòng nhập loại chức danh!');
+      return;
+    }
+    if (!utilitiesObjService.hasValueString(data?.typeOfContract)) {
+      notificationService.error('Lỗi: Vui lòng nhập loại hợp đồng!');
+      return;
+    }
+    APIupdateStaff(data);
   };
 
   // Hiện thị option dropdown cho loại hình nhân sự

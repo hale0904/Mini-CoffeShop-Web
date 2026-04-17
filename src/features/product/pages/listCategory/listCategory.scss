@@ -1,5 +1,43 @@
 @use '../../../../assets/styles/variables' as *;
 
+.breadcrumb {
+  padding: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  .ant-breadcrumb-item {
+    display: flex;
+    .breadcrumb-item2 {
+      display: flex;
+      align-items: center;
+      color: $blue-700;
+      padding: 4px 6px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+
+      &:hover {
+        // border: 1px solid $blue-200;
+        background-color: $gray-250;
+        transition: 400ms;
+      }
+    }
+    .breadcrumb-item1 {
+      display: flex;
+      align-items: center;
+      color: $blue-700;
+      padding: 4px;
+      border-radius: 8px;
+      svg {
+        color: $gray-500;
+      }
+    }
+  }
+
+  .ant-breadcrumb-separator {
+    padding: 4px 0;
+  }
+}
+
 .listCategory-container {
   min-height: 75vh;
   width: 100%;
@@ -7,11 +45,14 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
-  margin-bottom: 20px;
+  margin: 10px 0 20px;
+  background-color: $white;
+  border-radius: 20px;
 
   .header {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
     .filter-container {
       align-items: center;
       gap: 8px;
@@ -23,13 +64,19 @@
         .filter-icon {
           font-size: 30px;
         }
+        .filter-title {
+          font-size: 16px;
+          font-weight: 500;
+          margin-left: 4px;
+          color: $gray-600;
+        }
       }
       .search-field-container {
         margin-left: 4px;
         margin-top: 4px;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         margin-bottom: 10px;
         .search-field {
           label {
@@ -63,6 +110,26 @@
           }
           &:hover {
             background-color: $blue-500;
+            transition: 400ms;
+          }
+        }
+
+        .line {
+          font-size: 20px;
+          color: $gray-500;
+          margin-bottom: 4px;
+        }
+
+        .btn-reset {
+          padding: 5.5px 12px;
+          color: $gray-400;
+          font-size: 12px;
+          border: 1px solid $gray-400;
+          text-align: center;
+
+          &:hover {
+            border: 1px solid $blue-400;
+            color: $blue-400;
             transition: 400ms;
           }
         }
@@ -106,7 +173,8 @@
     }
     .btn-add-container {
       display: flex;
-      align-items: last baseline;
+      align-items: flex-end;
+      gap: 8px;
       margin-bottom: 16px;
       .btn-add {
         font-size: 14px;
@@ -120,6 +188,29 @@
         &:hover {
           background-color: $blue-500;
           transition: 400ms;
+        }
+      }
+    }
+
+    .btn-delete {
+      padding: 7px 16px;
+      background-color: $white;
+      border: 1px solid $red-300;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: 400ms;
+
+      .icon {
+        font-size: 15px;
+        color: $red-300;
+        transition: 400ms;
+      }
+
+      &:hover {
+        border: 1px solid $red-500;
+
+        .icon {
+          color: $red-500;
         }
       }
     }
@@ -212,6 +303,13 @@
           border-color: $blue-300;
         }
       }
+      .form-dropdown {
+        .ant-select-content {
+          input {
+            border: none;
+          }
+        }
+      }
     }
     .form-btn {
       display: flex;
@@ -220,13 +318,14 @@
       margin-top: 16px;
       .btn-cancel {
         padding: 8px 16px;
-        background-color: $white;
+        background-color: $gray-200;
         border: none;
         color: $gray-800;
         border-radius: 4px;
         cursor: pointer;
         &:hover {
           background-color: $gray-300;
+          transition: 400ms;
         }
       }
       .form-btn-submit {
@@ -237,7 +336,20 @@
         border-radius: 4px;
         cursor: pointer;
         &:hover {
+          transition: 400ms;
           background-color: $blue-500;
+        }
+      }
+      .form-btn-delete {
+        padding: 8px 16px;
+        background-color: $red-300;
+        border: none;
+        color: $white;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover {
+          background-color: $red-500;
+          transition: 400ms;
         }
       }
     }
@@ -245,5 +357,38 @@
 
   .ant-modal-close {
     color: $gray-800;
+  }
+}
+
+.modal-delete {
+  .ant-modal-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .ant-modal-body {
+      .modal {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-end;
+        .model-btn-delete {
+          width: 120px;
+          padding: 8px 16px;
+          background-color: $blue-400;
+          border: none;
+          color: $white;
+          border-radius: 4px;
+          cursor: pointer;
+          &:hover {
+            background-color: $blue-500;
+            transition: 400ms;
+          }
+          .btn-content {
+            font-size: 11px;
+            font-weight: 600;
+          }
+        }
+      }
+    }
   }
 }
